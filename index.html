@@ -1,0 +1,120 @@
+<!doctype html>
+<html ng-app="ninjaUI">
+	<head>
+		<!-- Angular material -->
+		<link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
+		<!-- Roboto -->
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
+		
+		<meta name="viewport" content="initial-scale=1" />
+		
+		<!-- Table -->
+		<link href="bower_components/angular-material-data-table/dist/md-data-table.min.css" rel="stylesheet" type="text/css"/>
+		
+		<!-- Me -->
+		<link rel="stylesheet" href="ninjaUI.css">
+	</head>
+	<body layout="column" ng-controller="ninjaAll">
+		<section  ng-controller="ninjaNav">
+			<md-toolbar layout="row">
+				<div class="md-toolbar-tools">
+					<md-button ng-click="toggleSidenav('left')" hide-gt-sm class="md-icon-button">
+						<md-icon aria-label="Menu" md-svg-icon="https://s3-us-west-2.amazonaws.com/s.cdpn.io/68133/menu.svg"></md-icon>
+					</md-button>
+					<h1>Burst.NINJA - {{ninjaData.timeToGo | secondsToDateTime | date:'HH:mm:ss'}} / {{ninjaData.totalTime | secondsToDateTime | date:'HH:mm:ss'}} --- <span my-current-time="M/d/yy h:mm:ss a"></span>
+					</h1>
+				</div>
+			</md-toolbar>
+		</section>
+		<div layout="row" flex>
+			<md-sidenav layout="column" class="site-sidenav md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
+				<md-content flex role="navigation">
+					<md-list>
+						<md-list-item>
+							<md-button ng-click="ul.selectUser(it)" class="selected">
+								<md-icon md-svg-icon="{{it.avatar}}" class="avatar"></md-icon>
+								Pool
+							</md-button>
+						</md-list-item>
+						<md-list-item>
+							<md-button ng-click="ul.selectUser(it)" ng-class="">
+								<md-icon md-svg-icon="{{it.avatar}}" class="avatar"></md-icon>
+								Explorer
+							</md-button>
+						</md-list-item>
+						<md-list-item>
+							<md-button ng-click="ul.selectUser(it)" ng-class="">
+								<md-icon md-svg-icon="{{it.avatar}}" class="avatar"></md-icon>
+								Faucet
+							</md-button>
+						</md-list-item>
+					</md-list>
+				</md-content>
+			</md-sidenav>
+			<div layout="column" flex id="content">
+				<md-content layout="column" flex class="md-padding">
+                    <md-tabs md-dynamic-height md-border-bottom>
+                        
+                        <md-tab label="Accounts">
+                            <section ng-controller="ninjaAccounts">
+                                <md-data-table-container>
+                                    <div layout="row" layout-align="space-between center">
+                                        <!--<div>
+                                            <h2>Accounts</h2>
+                                        </div>-->
+                                        <div>
+                                            <md-input-container>
+                                                <label>Search</label>
+                                                <input ng-model="table.search" ng-value="">
+                                            </md-input-container>
+                                        </div>
+                                    </div>
+                                    <table md-data-table>
+                                        <div ng-if="ninjaData.loading < 3" layout="row" layout-sm="column" layout-align="space-around">
+                                            <md-progress-circular class="md-primary" md-diameter="60"></md-progress-circular>
+                                        </div>
+                                        <thead md-order="order">
+                                            <!-- this cell will order by the name property -->
+                                            <th order-by="accountName" name="Account"></th>
+                                            <!-- this cell will not change the order when clicked -->
+                                            <th order-by="estimatedCapacityTB" numeric unit="TB" name="Capacity"></th>
+                                            <th order-by="share" numeric unit="%" name="Current share"></th>
+                                            <th order-by="historicShare" numeric unit="%" name="Historic share"></th>
+                                        </thead>
+                                        <tbody>
+
+                                            <tr ng-repeat="account in ninjaData.accStats | orderBy: order | limitTo: table.limit: (table.page - 1) * table.limit" ng-if="account.accountName.toLowerCase().indexOf(table.search.toLowerCase()) > -1 || account.account.toLowerCase().indexOf(table.search.toLowerCase()) > -1">
+                                                <td>{{account.accountName}}</td>
+                                                <td show-unit>{{account.estimatedCapacityTB | number:2}} </td>
+                                                <td show-uit>{{account.share * 100 | number:2}}</td>
+                                                <td show-uit>{{account.historicShare * 100 | number:2}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <md-data-table-pagination md-limit="table.limit" md-page="table.page" md-total="{{ninjaData.accounts.length}}"></md-data-table-pagination>
+                                </md-data-table-container>
+                            </section>
+                        </md-tab>
+                    </md-tabs>
+				</md-content>
+			</div>
+		</div>
+		
+		<!-- Angular -->
+		<script src="bower_components/angular/angular.min.js"></script>
+		
+		<!-- Angular websocket -->
+		<script src="bower_components/angular-websocket/angular-websocket.js"></script>
+
+		<!-- Material -->
+		<script src="bower_components/angular-animate/angular-animate.min.js"></script>
+		<script src="bower_components/angular-aria/angular-aria.min.js"></script>
+		<script src="bower_components/angular-material/angular-material.min.js"></script>
+		
+		<!-- table -->
+		<script type="text/javascript" src="bower_components/angular-material-data-table/dist/md-data-table.min.js"></script>
+		
+		<!-- Mine -->
+		<script src="ninjaUI.js"></script>
+	</body>
+</html>
