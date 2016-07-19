@@ -1,6 +1,6 @@
 //'ws://burst.ninja/webAPI/updates', 'updates'
 
-var ninjaApp = angular.module('ninjaUI', ['ngWebSocket','md.data.table','ngMaterial']);
+var ninjaApp = angular.module('ninjaUI', ['ngWebSocket','ngMaterial','md.data.table']);
 
 ninjaApp.factory('ninjaData', function($websocket){
 	// Open a WebSocket connection
@@ -48,6 +48,9 @@ ninjaApp.factory('ninjaData', function($websocket){
 						//accounts[i].accountName = "BURST-" + accounts[i].account;
                         accounts[i].accountName = accounts[i].account;
 					}
+                    if(!accounts[i].deadline){
+                        accounts[i].deadline = 9999999;
+                    }
 				}
 				ninjaData.accounts = accounts;
 				ninjaData.loading++;
@@ -112,11 +115,13 @@ ninjaApp.factory('ninjaData', function($websocket){
 
 ninjaApp.controller('ninjaAccounts', function($scope, ninjaData){
 	$scope.ninjaData = ninjaData;
+    
+    
 	$scope.table = {
 		"search" : "",
 		"limit" : 10,
 		"page" : 1,
-		"order" : "share"
+		"order" : "-share"
 	};
 	//$scope.order = 'estimatedCapacityTB';
 });
@@ -163,9 +168,8 @@ ninjaApp.directive('myCurrentTime', ['$interval', 'dateFilter', function($interv
 	};
 }]);
 
-
-ninjaApp.filter('secondsToDateTime', ['$interval', function($interval){
-	return function(seconds) {
-		return new Date(1970, 0, 1).setSeconds(seconds);
-	};
-}])
+ninjaApp.filter('secondsToDateTime',function(){
+    return function(seconds) {
+        return new Date(1970, 0, 1).setSeconds(seconds);
+    };
+});
