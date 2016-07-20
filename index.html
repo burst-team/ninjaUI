@@ -5,6 +5,8 @@
         <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
         <!-- Roboto -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
+        <!-- Icons -->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
         <meta name="viewport" content="initial-scale=1" />
 
@@ -15,87 +17,123 @@
         <link rel="stylesheet" href="ninjaUI.css">
     </head>
     <body layout="column" ng-controller="ninjaAll">
-        <section  ng-controller="ninjaNav">
-            <md-toolbar layout="row">
+        <section ng-controller="ninjaNav">
+            <md-toolbar layout="row" class="md-whiteframe-2dp">
                 <div class="md-toolbar-tools">
                     <md-button ng-click="toggleSidenav('left')" hide-gt-sm class="md-icon-button">
-                        <md-icon aria-label="Menu" md-svg-icon="https://s3-us-west-2.amazonaws.com/s.cdpn.io/68133/menu.svg"></md-icon>
+                        <md-icon aria-label="Menu" class="material-icons">menu</md-icon>
                     </md-button>
                     <h1>Burst.ninja</h1>
                     <span flex></span>
-                    <h1>{{ninjaData.timeToGo | secondsToDateTime | date:'HH:mm:ss'}} / {{ninjaData.totalTime | secondsToDateTime | date:'HH:mm:ss'}}</h1>
+                    <h1>{{ninjaData.timeToGo | formatSeconds}}
+                        /
+                        {{ninjaData.totalTime | formatSeconds}}
+                        to go
+                    </h1>
                 </div>
             </md-toolbar>
         </section>
         <div layout="row" flex>
-            <md-sidenav layout="column" class="site-sidenav md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
+            <md-sidenav layout="column" class="site-sidenav md-sidenav-left md-whiteframe-2dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
                 <md-content flex role="navigation">
                     <md-list>
                         <md-list-item>
                             <md-button ng-click="ul.selectUser(it)" class="selected">
-                                <md-icon md-svg-icon="{{it.avatar}}" class="avatar"></md-icon>
+                                <md-icon class="material-icons">pool</md-icon>
                                 Pool
                             </md-button>
                         </md-list-item>
                         <md-list-item>
                             <md-button ng-click="ul.selectUser(it)" ng-class="">
-                                <md-icon md-svg-icon="{{it.avatar}}" class="avatar"></md-icon>
+                                <md-icon class="material-icons">explore</md-icon>
                                 Explorer
                             </md-button>
                         </md-list-item>
                         <md-list-item>
                             <md-button ng-click="ul.selectUser(it)" ng-class="">
-                                <md-icon md-svg-icon="{{it.avatar}}" class="avatar"></md-icon>
+                                <md-icon class="material-icons">payment</md-icon>
                                 Faucet
                             </md-button>
                         </md-list-item>
                     </md-list>
                 </md-content>
             </md-sidenav>
-            <div layout="column" flex id="content">
-                <md-content layout="column" flex class="md-padding">
-                    <md-tabs md-dynamic-height md-border-bottom>
+            <div layout="row" flex id="content" ng-controller="ninjaAccounts">
+                <md-content layout="column" flex>
+                    <div layout="row">
+                        <md-data-table-container flex="50" class="md-padding">
+                            <table md-table>
+                                <tbody>
+                                    <tr>
+                                        <th>Best dealine</th>
+                                        <td>{{ninjaData.totalTime | formatSeconds}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>First miner to submit</th>
+                                        <td>googs</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </md-data-table-container>
+                        
+                        <div flex>
+                            <h1>Chart</h1>
+                        </div>
+                    </div>
 
+                    <md-tabs md-border-bottom flex>
+                        <!-- md-dynamic-height-->
                         <md-tab label="Accounts">
-                            <section ng-controller="ninjaAccounts">
-                                <md-data-table-container>
-                                    <table md-table>
-                                        <div ng-if="ninjaData.loading < 3" layout="row" layout-sm="column" layout-align="space-around">
-                                            <md-progress-circular class="md-primary" md-diameter="60"></md-progress-circular>
-                                        </div>
-                                        <thead md-head md-order="table.order">
-                                            <md-content>
-                                                <div>
-                                                    <md-input-container>
-                                                        <label>Search</label>
-                                                        <input ng-model="table.search" ng-value="">
-                                                    </md-input-container>
-                                                </div>
-                                            </md-content>
-                                            <tr md-row>
-                                                <!-- this cell will order by the name property -->
-                                                <th md-column><span>Account</span></th>
-                                                <!-- this cell will not change the order when clicked -->
-                                                <th md-column md-order-by="estimatedCapacityTB" md-numeric><span>Capacity (TB)</span></th>
-                                                <th md-column md-order-by="share" md-numeric><span>Current share</span></th>
-                                                <th md-column md-order-by="historicShare" md-numeric><span>Historic share</span></th>
-                                                <!--<th md-column md-order-by="deadline" md-numeric><span>Deadline (s)</span></th>-->
-                                            </tr>
-                                        </thead>
-                                        <tbody md-body>
+                            <md-data-table-container>
+                                <table md-table>
+                                    <div ng-if="ninjaData.loading < 3" layout="row" layout-sm="column" layout-align="space-around">
+                                        <md-progress-circular md-mode="indeterminate" class="md-primary" md-diameter="60"></md-progress-circular>
+                                    </div>
+                                    <thead md-head md-order="table.order">
+                                        <md-content></md-content>
+                                        <tr md-row>
+                                            <!-- this cell will order by the name property -->
+                                            <th md-column>
+                                                <span class="account-span">Account</span>
+                                                <md-input-container>
+                                                    <label>Search</label>
+                                                    <input ng-model="table.search" ng-value="">
+                                                </md-input-container>
+                                            </th>
+                                            <!-- this cell will not change the order when clicked -->
+                                            <th md-column md-order-by="estimatedCapacityTB" md-numeric><span>Capacity (TB)</span></th>
+                                            <th md-column md-order-by="historicShare" md-numeric><span>Historic share</span></th>
+                                            <th md-column md-order-by="share" md-numeric><span>Current share</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody md-body flex>
 
-                                            <tr md-row ng-repeat="account in ninjaData.accStats | orderBy: table.order | limitTo: table.limit: (table.page - 1) * table.limit" ng-if="account.accountName.toLowerCase().indexOf(table.search.toLowerCase()) > -1 || account.account.toLowerCase().indexOf(table.search.toLowerCase()) > -1">
-                                                <td md-cell><a target="_blank" href="http://burstcoin.biz/address/{{account.accountId}}">{{account.accountName}}</a></td>
-                                                <td md-cell>{{account.estimatedCapacityTB | number:2}} </td>
-                                                <td md-cell>{{account.share * 100 | number:2}}% ({{account.deadline | secondsToDateTime | date:'HH:mm:ss'}})</td>
-                                                <td md-cell>{{account.historicShare * 100 | number:2}}%</td>
-                                                <!--<td md-cell>{{account.deadline}}</td>-->
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <md-table-pagination md-limit="table.limit" md-page="table.page" md-total="{{ninjaData.accounts.length}}"></md-table-pagination>
-                                </md-data-table-container>
-                            </section>
+                                        <tr md-row ng-repeat="account in ninjaData.accStats | orderBy: table.order" ng-if="account.accountName.toLowerCase().indexOf(table.search.toLowerCase()) > -1 || account.account.toLowerCase().indexOf(table.search.toLowerCase()) > -1">
+
+                                            <!--  | limitTo: table.limit: (table.page - 1) * table.limit -->
+                                            <td md-cell>
+                                                <a target="_blank" href="http://burstcoin.biz/address/{{account.accountId}}">{{account.accountName}}</a>
+                                            </td>
+                                            <td md-cell>{{account.estimatedCapacityTB | number:2}} </td>
+                                            <td md-cell>{{account.historicShare * 100 | number:2}}%</td>
+                                            <td md-cell>
+                                                <span ng-show="account.deadline != 999999">
+                                                    <span>
+                                                        {{account.share * 100 | number:2}}% ({{ account.deadline | formatSeconds }})
+                                                    </span>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <!--<md-table-pagination md-limit="table.limit" md-page="table.page" md-total="{{ninjaData.accounts.length}}"></md-table-pagination>-->
+                            </md-data-table-container>
+                        </md-tab>
+
+                        <md-tab label="Blocks">
+                            <md-data-table-container>
+
+                            </md-data-table-container>
                         </md-tab>
                     </md-tabs>
                 </md-content>
@@ -115,8 +153,14 @@
 
         <!-- table -->
         <script type="text/javascript" src="bower_components/angular-material-data-table/dist/md-data-table.min.js"></script>
+        
+        <!-- Charts -->
+        
 
         <!-- Mine -->
-        <script src="ninjaUI.js"></script>
+        <script src="js/ninjaApp.js"></script>
+        <script src="js/ninjaServices.js"></script>
+        <script src="js/ninjaControllers.js"></script>
+        <script src="js/ninjaFilters.js"></script>
     </body>
 </html>

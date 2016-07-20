@@ -1,0 +1,1 @@
+var ninjaApp = angular.module('ninjaUI', ['ngWebSocket','ngMaterial','md.data.table']);
