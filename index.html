@@ -61,7 +61,7 @@
             <div layout="row" flex id="content" ng-controller="ninjaAccounts">
                 <md-content layout="column" flex>
                     <div layout="row">
-                        <md-data-table-container flex="50" class="md-padding">
+                        <!--<md-data-table-container flex="50" class="md-padding">
                             <table md-table>
                                 <tbody>
                                     <tr>
@@ -70,14 +70,37 @@
                                     </tr>
                                     <tr>
                                         <th>First miner to submit</th>
-                                        <td>googs</td>
+                                        <td><a href="http://burstcoin.biz/address/{{ninjaData.block.awards['First Miner To Submit'].accountId}}" target="_blank">{{ninjaData.block.awards['First Miner To Submit'].accountId}}</a></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Miners responded</th>
+                                        <td>{{ninjaData.block.awards['Miners Responded']}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Last miner to submit</th>
+                                        <td><a href="http://burstcoin.biz/address/{{ninjaData.block.awards['First Miner To Submit'].accountId}}" target="_blank">{{ninjaData.block.awards['Last Miner To Submit'].accountId}}</a></td>
                                     </tr>
                                 </tbody>
                             </table>
-                        </md-data-table-container>
+                        </md-data-table-container>-->
                         
                         <div flex>
-                            <h1>Chart</h1>
+                            <section>
+                                <div google-chart chart="ninjaData.currentShareChart"></div>
+                            </section>
+                        </div>
+                        
+                        <div id="popupContainer">
+                            <md-button class="md-fab" aria-label="Getting started" ng-click="showAlert($event)">
+                                <md-icon class="material-icons">info</md-icon>
+                                <md-tooltip md-direction="left">
+                                    Getting started
+                                </md-tooltip>
+                            </md-button>
+                            
+                            <!--<md-button class="md-primary md-raised" ng-click="showAlert($event)"   >
+                                Getting started
+                            </md-button>-->
                         </div>
                     </div>
 
@@ -94,6 +117,12 @@
                                         <tr md-row>
                                             <!-- this cell will order by the name property -->
                                             <th md-column>
+                                                <md-icon aria-label="Colour" class="material-icons">album</md-icon>
+                                                <md-tooltip>
+                                                    Colour
+                                                </md-tooltip>
+                                            </th>
+                                            <th md-column>
                                                 <span class="account-span">Account</span>
                                                 <md-input-container>
                                                     <label>Search</label>
@@ -101,20 +130,47 @@
                                                 </md-input-container>
                                             </th>
                                             <!-- this cell will not change the order when clicked -->
-                                            <th md-column md-order-by="estimatedCapacityTB" md-numeric><span>Capacity (TB)</span></th>
-                                            <th md-column md-order-by="historicShare" md-numeric><span>Historic share</span></th>
-                                            <th md-column md-order-by="share" md-numeric><span>Current share</span></th>
+                                            <th md-column md-order-by="estimatedCapacityTB" md-numeric>
+                                                <span>Capacity (TB)
+                                                    <md-tooltip>
+                                                        Rough estimation of miner's mining capacity, calculated based on deadline submissions
+                                                    </md-tooltip>
+                                                </span>
+                                            </th>
+                                            <th md-column md-order-by="historicShare" md-numeric>
+                                                <span>Historic share
+                                                    <md-tooltip>
+                                                        % share of block reward if current block is won, based on historic submissions.
+                                                    </md-tooltip>
+                                                </span>
+                                            </th>
+                                            <th md-column md-order-by="share" md-numeric>
+                                                <span>Current share
+                                                    <md-tooltip>
+                                                        % share of block reward if current block is won, based on current best deadline.
+                                                    </md-tooltip>
+                                                </span>
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody md-body flex>
 
-                                        <tr md-row ng-repeat="account in ninjaData.accStats | orderBy: table.order" ng-if="account.accountName.toLowerCase().indexOf(table.search.toLowerCase()) > -1 || account.account.toLowerCase().indexOf(table.search.toLowerCase()) > -1">
+                                        <tr md-row ng-repeat="account in ninjaData.accounts | orderBy: table.order" ng-if="account.accountName.toLowerCase().indexOf(table.search.toLowerCase()) > -1 || account.account.toLowerCase().indexOf(table.search.toLowerCase()) > -1">
 
                                             <!--  | limitTo: table.limit: (table.page - 1) * table.limit -->
+                                            
                                             <td md-cell>
-                                                <a target="_blank" href="http://burstcoin.biz/address/{{account.accountId}}">{{account.accountName}}</a>
+                                                <md-icon ng-style="{color:account.colour}" aria-label="Colour" class="material-icons">album</md-icon>
                                             </td>
-                                            <td md-cell>{{account.estimatedCapacityTB | number:2}} </td>
+                                            <td md-cell>
+                                                <a target="_blank" href="http://burstcoin.biz/address/{{account.accountId}}">
+                                                    <md-tooltip md-direction="right">
+                                                        Numeric ID: {{account.accountId}}
+                                                    </md-tooltip>
+                                                    {{account.accountName}}
+                                                </a>
+                                            </td>
+                                            <td md-cell>{{account.estimatedCapacityTB | number:2}}</td>
                                             <td md-cell>{{account.historicShare * 100 | number:2}}%</td>
                                             <td md-cell>
                                                 <span ng-show="account.deadline != 999999">
@@ -155,7 +211,7 @@
         <script type="text/javascript" src="bower_components/angular-material-data-table/dist/md-data-table.min.js"></script>
         
         <!-- Charts -->
-        
+        <script src="bower_components/angular-google-chart/ng-google-chart.js"></script>
 
         <!-- Mine -->
         <script src="js/ninjaApp.js"></script>

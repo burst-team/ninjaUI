@@ -24,6 +24,7 @@
     "angular-material": "1.0.0",
     "angular": "1.5.7",
     "angular-websocket": "~1.0.13",
-    "angular-material-data-table": "^0.10.9"
+    "angular-material-data-table": "^0.10.9",
+    "angular-google-chart": "^0.1.0"
   }
 }

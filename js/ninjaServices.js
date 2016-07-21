@@ -8,13 +8,25 @@ ninjaApp.factory('ninjaData', function($websocket,$interval){
 
     var ninjaData = {};
     ninjaData.loading = 0;
+    
+    function toColour(num) {
+        /*console.log("Num: " + num);
+        num >>>= 0;
+        var b = num & 0xFF,
+            g = (num & 0xFF00) >>> 8,
+            r = (num & 0xFF0000) >>> 16;
+            //a = ( (num & 0xFF000000) >>> 24 ) / 255 ;
+        return "rgb(" + [r, g, b].join(",") + ")";*/
+        return "#" + num.toString(16).slice(0,6);
+    }
 
     ninjaSocket.onMessage(function(message){
         //console.log(message)
         /*collection.push(JSON.parse(message.data));*/
         //console.log(JSON.parse(message.data));
-        if (message.data) {
-
+        if (message.data){
+            
+            //Shares
             if(message.data.indexOf('SHARES:') == 0 ){
                 var shares = JSON.parse(message.data.substr(7));
 
@@ -31,14 +43,14 @@ ninjaApp.factory('ninjaData', function($websocket,$interval){
                 }
                 ninjaData.loading++;
             }
-
+            //Block
             else if( message.data.indexOf('BLOCK:') == 0){
                 var block = JSON.parse(message.data.substr(6));
                 console.log(block);
                 ninjaData.block = block;
                 ninjaData.loading++;
             }
-
+            //Accounts
             else if( message.data.indexOf('ACCOUNTS:') == 0 ) {
                 var accounts = JSON.parse(message.data.substr(9));
                 for(var i = 0; i < accounts.length; i++){
@@ -70,6 +82,9 @@ ninjaApp.factory('ninjaData', function($websocket,$interval){
                 if(ninjaData.accounts[i].share == undefined){
                     ninjaData.accounts[i].share = 0;
                 }
+                
+                //Colour
+                ninjaData.accounts[i].colour = toColour(ninjaData.accounts[i].accountId);
             }
 
             //Historic shares
@@ -84,9 +99,60 @@ ninjaApp.factory('ninjaData', function($websocket,$interval){
                     ninjaData.accounts[i].historicShare = 0;
                 }
             }
+            
+            //Chart data
+            
+            
+            /*ninjaData.accountChart = {
+                data: [],
+                labels: [],
+                colours: [],
+                options: {
+                    segmentShowStroke: false,
+                    tooltipTemplate: "<%= label %>: ~<%= value %>%"
+                }
+            };
+            for(var i=0;i<ninjaData.accounts.length;i++){
+                ninjaData.accountChart.data.push(Math.round(ninjaData.accounts[i].share * 10000)/100);
+                ninjaData.accountChart.labels.push(ninjaData.accounts[i].accountName);
+                ninjaData.accountChart.colours.push(ninjaData.accounts[i].colour);
+            }*/
+            
+            ninjaData.currentShareChart = {
+                type: "PieChart",
+                data: [['Account', 'Share']],
+                options: {
+                    title: "Current shares",
+                    displayExactValues: false,
+                    width: 400,
+                    height: 200,
+                    is3D: false,
+                    chartArea: {left:20,top:25,bottom:20,height:"100%"},
+                    pieHole: 0.5,
+                    colors: [],
+                    pieSliceBorderColor:"transparent",
+                    legend : {
+                        position:"none"
+                    },
+                    tooltip: {
+                        trigger:"selection"
+                    }
+                },
+                formatters: {
+                    number : [{
+                        columnNum: 1,
+                        pattern: "%"
+                    }]
+                }
+            };
+            
+            for(var i=0;i<ninjaData.accounts.length;i++){
+                var name = ninjaData.accounts[i].accountName;
+                var share = Math.round(ninjaData.accounts[i].share * 10000)/100;
+                ninjaData.currentShareChart.data.push([name,share]);
+                ninjaData.currentShareChart.options.colors.push(ninjaData.accounts[i].colour);
+            }
         }
-
-        ninjaData.accStats = ninjaData.accounts;
 
         console.log(ninjaData);
     });
@@ -99,6 +165,8 @@ ninjaApp.factory('ninjaData', function($websocket,$interval){
 			ninjaSocket.send(JSON.stringify({ action: 'get' }));
 		}
 	};*/
+    
+    
 
     return ninjaData;
 
